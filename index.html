@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work In Progress Geospatial Analyst: Master Roadmap</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
+        .week-btn-active { background-color: #0369a1; color: white; box-shadow: 0 10px 15px -3px rgba(3, 105, 161, 0.3); transform: translateY(-2px); }
+        .week-btn-inactive { background-color: white; color: #64748b; border: 1px solid #e2e8f0; }
+        .week-btn-inactive:hover { background-color: #f1f5f9; border-color: #0369a1; color: #0369a1; }
+        .month-btn-active { border-bottom: 3px solid #0369a1; color: #0369a1; font-weight: 800; }
+        .fade-entry { animation: fadeSlideUp 0.4s ease-out forwards; }
+        @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .code-snippet { font-family: 'Fira Code', monospace; background-color: #0c0a09; color: #10b981; border-radius: 0.75rem; padding: 1.5rem; overflow-x: auto; font-size: 0.875rem; line-height: 1.6; border: 1px solid #1c1917; }
+        .checkbox-custom { width: 1.25rem; height: 1.25rem; border: 2px solid #cbd5e1; border-radius: 0.375rem; transition: all 0.2s; cursor: pointer; }
+        .checkbox-custom:checked { background-color: #065f46; border-color: #065f46; }
+        .modal-overlay { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(4px); }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #065f46; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center py-4 gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-sky-700 rounded-xl flex items-center justify-center text-white shadow-lg">
+                        <span class="text-xl font-black">WIP</span>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-extrabold text-slate-900 leading-tight tracking-tighter uppercase">Geospatial Analyst</h1>
+                        <p class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest mt-1">Roadmap to Solutions Architect</p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col items-center md:items-end">
+                    <div class="flex space-x-8 text-sm font-bold text-slate-400 mb-1" id="monthSelector"></div>
+                    <div id="liveTime" class="text-[10px] font-mono text-slate-400"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- Week Selector Area -->
+        <div class="flex items-center justify-center space-x-2 mb-10" id="masterWeekSelector"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Sidebar -->
+            <div class="lg:col-span-4 space-y-6">
+                <!-- Mastery Breakdown -->
+                <div class="glass-card rounded-3xl p-6 shadow-sm border-l-4 border-l-emerald-700">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Module Mastery</h3>
+                        <span id="taskCounter" class="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">0/0</span>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-2">
+                                <span class="text-slate-700">Course Completion</span>
+                                <span class="text-sky-700" id="completionPct">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div id="completionBar" class="h-full bg-sky-700 transition-all duration-1000" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-2 pt-2" id="skillBreakdown"></div>
+                    </div>
+                </div>
+
+                <!-- Concept Card -->
+                <div class="bg-emerald-900 rounded-3xl p-6 text-white shadow-xl">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <span class="text-xl">🧠</span>
+                        <h3 class="text-lg font-bold text-emerald-400">The "Big Idea"</h3>
+                    </div>
+                    <div id="analogyBox" class="text-emerald-50 text-sm leading-relaxed border-l-2 border-emerald-500 pl-4 py-1"></div>
+                    <div class="mt-4 pt-4 border-t border-emerald-800 text-[10px] font-bold text-emerald-300 uppercase italic" id="mindsetQuote"></div>
+                </div>
+
+                <!-- Coding Lab -->
+                <div class="glass-card rounded-3xl p-6 bg-slate-900 text-white">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Python Practice Lab</h3>
+                    <div class="space-y-3">
+                        <p id="practicePrompt" class="text-xs text-slate-300"></p>
+                        <textarea id="codeEditor" class="w-full h-32 bg-black border border-slate-700 rounded-xl p-3 text-xs font-mono text-emerald-400 focus:outline-none focus:border-emerald-500" placeholder="# Write logic here..."></textarea>
+                        <button onclick="validateCode()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 rounded-xl text-xs font-bold transition">Validate Logic</button>
+                        <p id="labFeedback" class="text-[10px] text-center"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="lg:col-span-8 space-y-8 fade-entry" id="weekContent">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div>
+                        <h2 class="text-4xl font-black text-slate-900 tracking-tight" id="weekTitle">Loading...</h2>
+                        <p class="text-lg text-slate-500 mt-1" id="weekSubtitle"></p>
+                    </div>
+                    <div class="bg-sky-100 text-sky-800 px-4 py-2 rounded-xl text-sm font-bold border border-sky-200">
+                        Focus: <span id="weekFocus">---</span>
+                    </div>
+                </div>
+
+                <!-- Daily Schedule -->
+                <div class="glass-card rounded-3xl overflow-hidden shadow-sm">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex flex-wrap gap-2" id="dayTabs"></div>
+                    <div class="p-8" id="dayDetail"></div>
+                </div>
+
+                <!-- Discussion Concept Notes -->
+                <div class="glass-card rounded-3xl p-8 border border-sky-100 bg-white shadow-sm">
+                    <h3 class="text-xl font-bold text-sky-900 mb-6 flex items-center">
+                        <span class="mr-3 text-2xl">📝</span> Mentor Discussion: Deep Dive
+                    </h3>
+                    <div id="conceptNotes" class="prose prose-slate max-w-none text-slate-600 leading-relaxed space-y-4 text-sm md:text-base">
+                        <!-- Content injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Vocab Stack -->
+                <div>
+                    <h3 class="text-xl font-bold text-sky-900 mb-4">Vocabulary Stack</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="vocabGrid"></div>
+                </div>
+
+                <!-- Milestone Logic -->
+                <div class="glass-card rounded-3xl p-8 border border-emerald-100 relative bg-white overflow-hidden">
+                    <div class="absolute right-[-10px] top-[-10px] text-8xl opacity-5 font-black text-emerald-900">MILE</div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-6">Saturday Project Logic</h3>
+                    <div class="space-y-4" id="projectLogic"></div>
+                    <div class="mt-8 code-snippet" id="codeSnippet"></div>
+                </div>
+
+                <!-- Weekly Assessment -->
+                <div class="glass-card rounded-3xl p-8 border border-slate-200 shadow-sm bg-white">
+                    <h3 class="text-xl font-bold text-slate-900 mb-2" id="quizHeader">Weekly Assessment</h3>
+                    <p class="text-sm text-slate-500 mb-8" id="quizSubheader">Complete 20 items to validate this milestone.</p>
+                    <div id="quizContent" class="space-y-10"></div>
+                    <div class="mt-10 pt-6 border-t border-slate-100 text-center">
+                        <button onclick="gradeQuiz()" class="px-10 py-3 bg-sky-700 text-white font-bold rounded-2xl hover:bg-sky-800 shadow-lg transition">Submit Assessment</button>
+                        <div id="quizResult" class="mt-6 hidden">
+                            <p class="text-3xl font-black text-sky-900" id="scoreText"></p>
+                            <p class="text-sm text-slate-500 mt-1" id="scoreComment"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Output Vault -->
+                <div class="glass-card rounded-3xl p-8 border border-slate-200 bg-slate-50">
+                    <h3 class="text-xl font-bold text-slate-900 mb-1">📂 Weekly Output Vault</h3>
+                    <p class="text-xs text-slate-500 mb-6 uppercase tracking-widest">Submit your GitHub links & work evidence here</p>
+                    
+                    <div class="space-y-4">
+                        <input type="text" id="githubInput" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm" placeholder="GitHub Repository Link">
+                        <textarea id="artifactNotes" class="w-full h-24 bg-white border border-slate-200 rounded-xl p-4 text-sm" placeholder="Paste local paths or accomplishment notes..."></textarea>
+                        <button onclick="saveVaultData()" class="px-6 py-2 bg-sky-700 text-white text-xs font-bold rounded-xl shadow-md">Sync to Vault</button>
+                    </div>
+                </div>
+
+                <!-- Profile Anchor Section -->
+                <div class="pt-12 border-t border-slate-200" id="profileAnchor">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 class="text-2xl font-black text-slate-900">My Profile</h2>
+                            <p class="text-sm text-slate-500">Your professional identity and career milestones.</p>
+                        </div>
+                        <button onclick="toggleProfileModal(true)" class="px-6 py-3 bg-white border border-slate-200 rounded-2xl font-bold text-sm text-sky-700 hover:bg-sky-50 transition shadow-sm">
+                            Edit My Profile
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Profile Card -->
+                        <div class="glass-card p-8 rounded-[2rem] flex flex-col items-center text-center">
+                            <div id="displayProfilePic" class="w-32 h-32 rounded-3xl bg-slate-200 bg-cover bg-center border-4 border-white shadow-xl mb-6"></div>
+                            <h3 id="displayName" class="text-xl font-black text-slate-900 leading-tight">Anonymous Analyst</h3>
+                            <p id="displayProfession" class="text-xs font-bold text-emerald-700 uppercase tracking-widest mt-1">Work In Progress Analyst</p>
+                            <div class="mt-6 pt-6 border-t border-slate-100 w-full text-left space-y-2">
+                                <p class="text-[10px] text-slate-400 font-bold uppercase">Location</p>
+                                <p id="displayAddress" class="text-xs font-medium text-slate-600">Not set.</p>
+                            </div>
+                        </div>
+
+                        <!-- Info Card -->
+                        <div class="lg:col-span-2 space-y-6">
+                            <div class="glass-card p-8 rounded-[2rem]">
+                                <h4 class="text-xs font-bold text-sky-700 uppercase tracking-widest mb-4">Academic Background</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Undergraduate Program</p>
+                                        <p id="displayProgram" class="text-sm font-bold text-slate-800">Not set.</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">School</p>
+                                        <p id="displaySchool" class="text-sm font-bold text-slate-800">Not set.</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Educational Attainment</p>
+                                        <p id="displayAttainment" class="text-sm font-bold text-slate-800">Not set.</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Society / Association</p>
+                                        <p id="displaySociety" class="text-sm font-bold text-slate-800">Not set.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="glass-card p-6 rounded-3xl">
+                                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Recent Certificates</h4>
+                                    <p id="displayCerts" class="text-xs text-slate-600 leading-relaxed whitespace-pre-line">No certificates recorded.</p>
+                                </div>
+                                <div class="glass-card p-6 rounded-3xl">
+                                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Trainings & Seminars</h4>
+                                    <p id="displaySeminars" class="text-xs text-slate-600 leading-relaxed whitespace-pre-line">No trainings recorded.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 modal-overlay" onclick="toggleProfileModal(false)"></div>
+        <div class="bg-white rounded-[2rem] w-full max-w-4xl max-h-[90vh] overflow-y-auto relative p-8 shadow-2xl">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-black text-slate-900">Edit My Profile</h2>
+                <button onclick="toggleProfileModal(false)" class="text-slate-400 hover:text-slate-900 text-2xl font-bold">×</button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+                <!-- Left Column -->
+                <div class="md:col-span-4 space-y-6">
+                    <div class="flex flex-col items-center p-6 bg-slate-50 rounded-3xl">
+                        <div id="modalProfilePic" class="w-32 h-32 rounded-3xl bg-slate-200 bg-cover bg-center border-4 border-white shadow-inner mb-4"></div>
+                        <label class="cursor-pointer bg-sky-700 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-sky-800 transition">
+                            Upload Photo
+                            <input type="file" id="imageUpload" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
+                        </label>
+                    </div>
+                    <div class="space-y-4">
+                        <input type="text" id="profName" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-bold" placeholder="Full Name">
+                        <input type="text" id="profTitle" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm" placeholder="Profession">
+                        <input type="text" id="profAddress" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm" placeholder="Address">
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="md:col-span-8 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" id="profProgram" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm" placeholder="Undergraduate Program">
+                        <input type="text" id="profSchool" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm" placeholder="School">
+                        <select id="profAttainment" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm">
+                            <option value="">Select Educational Attainment</option>
+                            <option value="Bachelor">Bachelor's Degree</option>
+                            <option value="Master">Master's Degree</option>
+                            <option value="Doctorate">Doctorate</option>
+                        </select>
+                        <input type="text" id="profSociety" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm" placeholder="Society / Association">
+                    </div>
+
+                    <textarea id="profJobs" class="w-full h-24 bg-slate-50 border border-slate-100 rounded-xl p-4 text-sm" placeholder="Job History (Roles, Dates, Companies)"></textarea>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <textarea id="profCerts" class="w-full h-32 bg-slate-50 border border-slate-100 rounded-xl p-4 text-sm" placeholder="Certificates & Licenses (Include giving body)"></textarea>
+                        <textarea id="profSeminars" class="w-full h-32 bg-slate-50 border border-slate-100 rounded-xl p-4 text-sm" placeholder="Trainings & Seminars"></textarea>
+                    </div>
+
+                    <button onclick="saveProfile()" class="w-full py-4 bg-emerald-700 text-white font-black rounded-2xl shadow-xl hover:bg-emerald-800 transition uppercase tracking-widest">Update Profile</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const roadmap = {
+            "Month 1": {
+                weeks: {
+                    1: {
+                        title: "W1: Python Foundations",
+                        subtitle: "Syntax & Beginner Logic",
+                        focus: "Grammar",
+                        analogy: "Python is like an <strong>Attribute Table</strong>. A Variable is the Column Header; a Data Type is the Field Type (String, Int, Float).",
+                        mindset: "Focus on learning how the computer 'thinks' before you try to make it map.",
+                        schedule: [
+                            { day: "Mon", task: "Python Environment & Hello World", concept: "<strong>Mentor Discussion: The Workshop Setup</strong><br><br>Let’s start at ground zero. Imagine you are about to build a precision instrument. Before you pick up the materials, you need a clean workbench and a reliable set of tools. In the coding world, your computer is that workbench, and <strong>Python</strong> is your primary toolbox.<br><br>Running 'Hello World' is more than a tradition; it's a diagnostic test. When you see that text appear in your console, you've confirmed that the 'wiring' between your brain, the keyboard, and the machine's logic engine is intact. It’s the first breath of a new digital system. If you can speak to the computer, you can command it." },
+                            { day: "Tue", task: "Variables & Data Types", concept: "<strong>Mentor Discussion: The Language of Storage</strong><br><br>In GIS, we deal with layers and attributes. If you look at an attribute table, one column might hold 'City Names' and another 'Population'. Python works exactly like this table.<br><br>A <strong>Variable</strong> is just a name you give to a box to remember what's inside. But you have to tell Python *what* kind of data is there. We use <strong>Strings</strong> for text (like city names), <strong>Integers</strong> for whole numbers (like building counts), and <strong>Floats</strong> for precision measurements (like coordinates or area). If you treat a word like a number, the system crashes. Mastery starts with data integrity and understanding how to label your world." },
+                            { day: "Wed", task: "Lists & Collections", concept: "<strong>Mentor Discussion: The Batch Advantage</strong><br><br>Imagine you have to process 50 different shapefiles. You wouldn't want to create 50 separate variables. Instead, you put them in a <strong>List</strong>.<br><br>A list is like a multi-slot drawer. You can put all your layers in there and tell Python: 'Look at this drawer.' Lists allow us to group related items together. Once grouped, we can count them, sort them, or—most importantly—loop through them. It is the beginning of handling data at scale. You are no longer managing single files; you are managing collections." },
+                            { day: "Thu", task: "Control Flow: If Statements", concept: "<strong>Mentor Discussion: The Intelligent Filter</strong><br><br>Digital intelligence is really just a series of very fast decisions. An <strong>If Statement</strong> is the gatekeeper of those decisions. It’s essentially your 'Definition Query' but inside the code.<br><br>You tell the machine: 'IF this parcel area is larger than 1000sqm, mark it as Industrial. ELSE, mark it as Residential.' By setting these rules, you take the manual labor out of classification. You are no longer manually inspecting data; you are teaching the code how to see and judge it on your behalf." },
+                            { day: "Fri", task: "Loops: The Automation Engine", concept: "<strong>Mentor Discussion: The Force Multiplier</strong><br><br>This is the secret weapon of the geospatial architect. A technician takes 2 minutes to rename a file. A <strong>Loop</strong> takes 0.001 seconds to rename 10,000 files.<br><br>A loop (specifically a 'for loop') tells Python: 'For every single item in this list, do the following task.' It is the conveyor belt of automation. If you find yourself doing the same thing twice in your GIS software, you should be writing a loop. It’s how you buy back your time and scale your output." },
+                            { day: "Sat", task: "Project: Logic Gate Builder", concept: "<strong>Mentor Discussion: Solving the Real-World Puzzle</strong><br><br>Today, you aren't just writing code; you are solving a spatial problem. You will take a list of raw survey data and use your new grammar—lists, loops, and if-statements—to process it automatically.<br><br>Think of this as your first custom 'plugin'. You are taking an input and creating an output without touching the mouse. This project validates that you can take abstract concepts and apply them to the messy data of reality. This is the foundation of high-value geospatial consulting." },
+                            { day: "Sun", task: "GitHub & Professional Proof", concept: "<strong>Mentor Discussion: Building the Receipt of Skill</strong><br><br>Why do we use GitHub? Because code that isn't saved and versioned properly doesn't exist to the rest of the world. In the global geospatial market, your 'commits' are your proof of work. They are the receipts for your skill acquisition.<br><br>Today is for refinement. Add <strong>Comments</strong> (#) to your code. Explain what you were thinking. Make it readable for others (and for your future self). Professionalism isn't just about code that works; it's about code that communicates." }
+                        ],
+                        vocab: [
+                            { term: "Variable", def: "A named label for a piece of data." }, { term: "Integer", def: "Whole numbers only." }, 
+                            { term: "Float", def: "Decimal numbers for precision." }, { term: "String", def: "Text data enclosed in quotes." },
+                            { term: "Boolean", def: "A True or False value." }, { term: "List", def: "A collection of items in order." }
+                        ],
+                        project: {
+                            steps: ["Define area list.", "Create for loop.", "Apply if/else logic.", "Print result."],
+                            code: "land_areas = [450, 1200, 300, 2500]\nfor area in land_areas:\n    status = 'Large' if area > 1000 else 'Small'\n    print(f'Area {area} is: {status}')"
+                        },
+                        practice: "Create a list 'layers' with 'Points' and 'Lines'. Loop through it and print each one.",
+                        quiz: [
+                            { q: "What is an Integer?", a: ["Text", "Whole Number", "Decimal", "Yes/No"], correct: 1 },
+                            { q: "Which symbol starts a comment?", a: ["!", "//", "#", "*"], correct: 2 },
+                            { q: "A Boolean can be:", a: ["True/False", "1-100", "A Word", "A Path"], correct: 0 },
+                            { q: "Which data type stores 121.5?", a: ["String", "Int", "Float", "Bool"], correct: 2 },
+                            { q: "What does 'len()' do to a list?", a: ["Deletes it", "Shows count", "Prints it", "Sorts it"], correct: 1 },
+                            { q: "What starts an IF block?", a: ["if", "then", "when", "logic"], correct: 0 },
+                            { q: "Indices in lists start at:", a: ["1", "0", "-1", "A"], correct: 1 },
+                            { q: "Which operator checks equality?", a: ["=", "==", "+", "!="], correct: 1 },
+                            { q: "What is a Float?", a: ["Decimal number", "Type of list", "Map layer", "Text block"], correct: 0 },
+                            { q: "A string must be in:", a: ["Quotes", "Brackets", "Parens", "Bold"], correct: 0 },
+                            { q: "What does a loop do?", a: ["Stops code", "Repeats code", "Deletes code", "Styles code"], correct: 1 },
+                            { q: "Which is a valid list?", a: ["(1,2)", "{1:2}", "[1,2]", "1-2"], correct: 2 },
+                            { q: "F-strings start with:", a: ["s", "f", "p", "t"], correct: 1 },
+                            { q: "Variable names cannot start with:", a: ["Letter", "Number", "Underscore", "A"], correct: 1 },
+                            { q: "What is 'Syntax'?", a: ["A tax on code", "Rules of the language", "A type of map", "A button"], correct: 1 },
+                            { q: "How many spaces is standard indentation?", a: ["2", "3", "4", "8"], correct: 2 },
+                            { q: "Which is NOT a data type?", a: ["String", "Logic", "Float", "Integer"], correct: 1 },
+                            { q: "What does 'else' follow?", a: ["for", "if", "print", "def"], correct: 1 },
+                            { q: "Where do you write Python?", a: ["Excel", "VS Code", "Word", "PPT"], correct: 1 },
+                            { q: "The goal of W1 is:", a: ["Mastering SQL", "Foundational Syntax", "Web Mapping", "3D GIS"], correct: 1 }
+                        ]
+                    },
+                    2: {
+                        title: "W2: Reusable Tools",
+                        subtitle: "Functions & Automation",
+                        focus: "Efficiency",
+                        analogy: "A **Function** is like a **Microwave**. You don't need to know how the radiation works; you just put inputs in and get a result out.",
+                        mindset: "Don't build it twice. Automate it once.",
+                        schedule: [
+                            { day: "Mon", task: "Writing Custom Functions", concept: "<strong>Mentor Discussion: The Power of Reuse</strong><br><br>In Week 1, we wrote code line by line. In Week 2, we start building 'machines'. A function is a block of code you write once and use 100 times. In GIS, if you have a specific way of calculating tax rates based on area, you don't want to type that math every time. You build a function, name it, and call it whenever you need it. This is the hallmark of a professional coder." },
+                            { day: "Tue", task: "Parameters & Returns", concept: "<strong>Mentor Discussion: Inputs and Outputs</strong><br><br>If a function is a machine, parameters are the materials you put in, and 'Returns' are the finished products. Imagine a function that takes a Shapefile path as a parameter, checks its projection, and returns the result. This input-output mindset is critical for building larger systems." },
+                            { day: "Wed", task: "The OS Module", concept: "<strong>Mentor Discussion: Controlling the PC</strong><br><br>Automation isn't just about math; it's about handling files. The 'os' module is Python's way of touching your computer's folders. We use this to automatically find all .shp files in a folder or create new project directories without ever opening File Explorer." },
+                            { day: "Thu", task: "Handling Paths", concept: "<strong>Mentor Discussion: The Address System</strong><br><br>Windows and Python sometimes disagree on how folder paths are written (the backslash problem). Learning to handle paths using 'raw strings' or specific path modules is a 'boring' but essential skill that prevents 90% of beginner errors." },
+                            { day: "Fri", task: "Error Handling", concept: "<strong>Mentor Discussion: Graceful Failure</strong><br><br>Code will break. A file will be missing or a column header will be misspelled. Professional code uses 'Try/Except' blocks. This allows your script to say 'Oops, I can't find that file, but I'll keep going with the next one' instead of simply crashing." },
+                            { day: "Sat", task: "Project: Workspace Auto-Builder", concept: "<strong>Mentor Discussion: The 1-Second Setup</strong><br><br>Your project today is to build a script that sets up a standardized GIS folder structure (Raw, Processed, SHP, Export) with one click. This saves you 5 minutes every time you start a project. Over a year, that's hours of your life back." },
+                            { day: "Sun", task: "GitHub: Advanced Commits", concept: "<strong>Mentor Discussion: Documenting Your Progress</strong><br><br>Upload your functions. Start documenting your 'Helper Scripts'. This folder will become your personal toolkit for years to come." }
+                        ],
+                        vocab: [
+                            { term: "def", def: "Keyword used to define a new function." }, { term: "Parameter", def: "The input variable for a function." }, 
+                            { term: "Return", def: "The value a function sends back." }, { term: "Import", def: "Bringing in external toolboxes like 'os'." }
+                        ],
+                        project: {
+                            steps: ["Import OS module.", "Define setup function.", "Loop through folder names.", "Run os.makedirs."],
+                            code: "import os\ndef setup(proj_name):\n    for folder in ['Raw', 'SHP', 'Final']:\n        os.makedirs(f'{proj_name}/{folder}', exist_ok=True)\nsetup('LGU_Zoning_Project')"
+                        },
+                        practice: "Define a function 'area' that takes 'radius' and returns '3.14 * radius * radius'.",
+                        quiz: Array(20).fill({q: "W2 Placeholder Question", a: ["A", "B", "C", "D"], correct: 0})
+                    },
+                    3: {
+                        title: "W3: Spatial Powerhouses",
+                        subtitle: "Pandas & Geopandas",
+                        focus: "Dataframes",
+                        analogy: "<strong>Geopandas</strong> is an **Attribute Table that thinks**. It calculates centroids and intersections for 1,000 layers at once without ever opening a map.",
+                        mindset: "Data is more than just a map; it's a high-performance table.",
+                        schedule: [
+                            { day: "Mon", task: "Intro to Pandas", concept: "<strong>Mentor Discussion: The Super-Excel</strong><br><br>Pandas is the engine of the data world. It turns your CSVs or Excel sheets into 'DataFrames'. In GIS, we often have millions of rows of data. Opening that in Excel will crash your PC. Pandas handles it in seconds using code. You are no longer limited by software interface buttons; you are limited only by your logic." },
+                            { day: "Tue", task: "Filtering & Querying", concept: "<strong>Mentor Discussion: Slicing the Data</strong><br><br>Instead of clicking 'Select by Attributes', you write one line of code. 'Give me every parcel where tax > 500.' This speed is what makes you a high-value analyst." },
+                            { day: "Wed", task: "Geopandas & SHP Loading", concept: "<strong>Mentor Discussion: Spatial Tables</strong><br><br>Geopandas is simply Pandas with a 'Geometry' column. It understands Shapefiles, GeoJSON, and GeoPackages. You can now perform spatial math (area, length) directly on thousands of rows simultaneously." },
+                            { day: "Thu", task: "CRS & Projections", concept: "<strong>Mentor Discussion: The World is Flat (In Code)</strong><br><br>Managing Coordinate Reference Systems (CRS) is the hardest part of GIS. Geopandas makes it easy with 'to_crs()'. Learning to handle the shift between WGS84 and local projections via code is a master-level skill." },
+                            { day: "Fri", task: "Spatial Joins", concept: "<strong>Mentor Discussion: Logical Intersections</strong><br><br>Joining a points layer with a polygon layer via code is called a Spatial Join. This allows you to automatically tell which towers are in which flood zones for a whole province in one click." },
+                            { day: "Sat", task: "Project: Flood Risk Reporter", concept: "<strong>Mentor Discussion: High-Value Analytics</strong><br><br>You will load two layers, perform a spatial join, and export a CSV of 'High Risk' locations. This is a task that would take a manual analyst hours to check. You will do it in seconds." },
+                            { day: "Sun", task: "GitHub: Data Portfolio", concept: "<strong>Mentor Discussion: Showing Your Results</strong><br><br>Upload your first spatial analysis script. This is the 'money maker' part of your repository." }
+                        ],
+                        vocab: [
+                            { term: "DataFrame", def: "A 2D data structure, like a table." }, { term: "GeoDataFrame", def: "A table with a geometry column." }, 
+                            { term: "Spatial Join", def: "Merging data based on location." }, { term: "CRS", def: "The coordinate system of the data." }
+                        ],
+                        project: {
+                            steps: ["Import Geopandas.", "Load SHP files.", "Join layers.", "Export CSV."],
+                            code: "import geopandas as gpd\ntowers = gpd.read_file('towers.shp')\nflood = gpd.read_file('flood.shp')\nrisky = gpd.sjoin(towers, flood)\nrisky.to_csv('Risk_Report.csv')"
+                        },
+                        practice: "Load a file 'parcels.shp' using geopandas and print the first 5 rows.",
+                        quiz: Array(20).fill({q: "W3 Placeholder Question", a: ["A", "B", "C", "D"], correct: 0})
+                    },
+                    4: {
+                        title: "W4: The QGIS Engine",
+                        subtitle: "PyQGIS Integration",
+                        focus: "Software Control",
+                        analogy: "<strong>PyQGIS</strong> is the **Remote Control** for your map. You tell the computer which buttons to press.",
+                        mindset: "Don't be a user of the software; be the master of it.",
+                        schedule: [
+                            { day: "Mon", task: "The QGIS Console", concept: "<strong>Mentor Discussion: Controlling the Cockpit</strong><br><br>In Week 4, we step inside the software. QGIS has a built-in Python console. You can now type code that changes the map you are looking at. It's the ultimate power-user move. You are no longer searching for tools in menus; you are calling them directly from the engine room." },
+                            { day: "Tue", task: "The 'iface' Object", concept: "<strong>Mentor Discussion: Your Bridge</strong><br><br>In PyQGIS, 'iface' is your main gateway. It stands for Interface. Through this object, you can touch the canvas, add layers, and change colors. It's the bridge between your abstract code and the visual map." },
+                            { day: "Wed", task: "Managing Layers", concept: "<strong>Mentor Discussion: Automating the Legend</strong><br><br>You will learn to add layers to your project automatically. Imagine a script that finds all SHP files in a project folder and adds them to your map, correctly ordered and grouped, in one second." },
+                            { day: "Thu", task: "Symbology & Style", concept: "<strong>Mentor Discussion: Code-Driven Design</strong><br><br>Instead of right-clicking 'Properties' -> 'Symbology' for every layer, you use code to set colors, line weights, and transparency. This ensures your maps always look consistent and professional." },
+                            { day: "Fri", task: "Map Canvas & Refresh", concept: "<strong>Mentor Discussion: Visual Updates</strong><br><br>When you change things via code, the map doesn't always redraw immediately. You'll learn to 'Trigger a Repaint'. It’s the final step in ensuring your automation results in a visible, finished map." },
+                            { day: "Sat", task: "Project: One-Click Map Stylist", concept: "<strong>Mentor Discussion: Your First Plugin</strong><br><br>Today, you build a button. A script that, when run, takes your active layer and styles it perfectly according to your standards. This is the first step toward building your own GIS plugins." },
+                            { day: "Sun", task: "Month 1 Final Audit", concept: "<strong>Mentor Discussion: The Graduation</strong><br><br>Clean your whole Month 1 folder. You are no longer a beginner. You are a 'Work in Progress' Analyst with a real technical foundation." }
+                        ],
+                        vocab: [
+                            { term: "iface", def: "The gateway to the QGIS user interface." }, { term: "activeLayer", def: "The layer currently selected by the user." }, 
+                            { term: "Symbol", def: "The object defining color and style." }, { term: "Canvas", def: "The visual map area." }
+                        ],
+                        project: {
+                            steps: ["Get Active Layer.", "Create Symbol.", "Set Color.", "Refresh Canvas."],
+                            code: "layer = iface.activeLayer()\nsymbol = QgsSymbol.defaultSymbol(layer.geometryType())\nsymbol.setColor(QColor('blue'))\nlayer.setRenderer(QgsSingleSymbolRenderer(symbol))\niface.mapCanvas().refresh()"
+                        },
+                        practice: "Write a line to get the name of the currently active layer in QGIS.",
+                        quiz: Array(20).fill({q: "W4 Placeholder Question", a: ["A", "B", "C", "D"], correct: 0})
+                    }
+                }
+            },
+            "Month 2": {
+                weeks: {
+                    1: {
+                        title: "W5: SQL & Databases",
+                        subtitle: "PostGIS Foundations",
+                        focus: "Databases",
+                        analogy: "SQL is **Talking to your Data**. You ask the database a question and it answers.",
+                        mindset: "Enterprise scale GIS requires databases, not just files.",
+                        schedule: [
+                            { day: "Mon", task: "Installing PostgreSQL", concept: "Mentor Discussion coming soon..." }
+                        ],
+                        vocab: [{ term: "PostGIS", def: "Spatial extension for SQL." }],
+                        project: { steps: ["Install PostGIS", "Import Shapefile"], code: "SELECT ST_Area(geom) FROM parcels;" },
+                        practice: "Write a query to SELECT all from a table.",
+                        quiz: Array(20).fill({q: "W5 Placeholder", a: ["A", "B", "C", "D"], correct: 0})
+                    }
+                }
+            }
+        };
+
+        // --- State Management ---
+        let currentMonth = "Month 1";
+        let currentWeek = 1;
+        let activeDayIdx = 0;
+        let taskState = JSON.parse(localStorage.getItem('gis_tasks_v3')) || {};
+        let vaultState = JSON.parse(localStorage.getItem('gis_vault_v3')) || {};
+        let profileState = JSON.parse(localStorage.getItem('gis_profile_v3')) || { 
+            name: "", title: "", addr: "", program: "", school: "", attain: "", society: "", jobs: "", certs: "", sem: "", pic: "" 
+        };
+
+        // --- Utility ---
+        const helper = {
+            el: (id) => document.getElementById(id),
+            setText: (id, text) => { if(document.getElementById(id)) document.getElementById(id).textContent = text; },
+            setHTML: (id, html) => { if(document.getElementById(id)) document.getElementById(id).innerHTML = html; },
+            setStyle: (id, prop, val) => { if(document.getElementById(id)) document.getElementById(id).style[prop] = val; }
+        };
+
+        // --- UI Logic ---
+        function updateProgress() {
+            let total = 0, done = 0;
+            const currentWeeks = roadmap[currentMonth].weeks;
+            const breakdown = helper.el('skillBreakdown');
+            if (breakdown) breakdown.innerHTML = '';
+
+            Object.keys(currentWeeks).forEach(w => {
+                let wTotal = 0, wDone = 0;
+                currentWeeks[w].schedule.forEach((task, idx) => {
+                    total++; wTotal++;
+                    const key = `${currentMonth}-${w}-${idx}`;
+                    if (taskState[key]) { done++; wDone++; }
+                });
+                const pct = Math.round((wDone / wTotal) * 100);
+                if (breakdown) {
+                    breakdown.innerHTML += `
+                        <div class="flex justify-between text-[10px] font-bold mb-1 uppercase">
+                            <span>W${w} Progress</span>
+                            <span>${pct}%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-1 rounded-full mb-3"><div class="h-full bg-emerald-600 transition-all" style="width: ${pct}%"></div></div>
+                    `;
+                }
+            });
+
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+            helper.setText('completionPct', pct + "%");
+            helper.setStyle('completionBar', 'width', pct + "%");
+            helper.setText('taskCounter', `${done}/${total}`);
+        }
+
+        function updateDashboard() {
+            const data = roadmap[currentMonth].weeks[currentWeek];
+            const day = data.schedule[activeDayIdx];
+
+            helper.setText('weekTitle', data.title);
+            helper.setText('weekSubtitle', data.subtitle);
+            helper.setText('weekFocus', data.focus);
+            helper.setHTML('analogyBox', data.analogy);
+            helper.setText('mindsetQuote', data.mindset);
+            helper.setHTML('conceptNotes', day.concept);
+            helper.setText('practicePrompt', data.practice);
+
+            const dayTabs = helper.el('dayTabs');
+            if (dayTabs) {
+                dayTabs.innerHTML = '';
+                data.schedule.forEach((s, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = `px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeDayIdx === idx ? 'bg-sky-700 text-white shadow-sm' : 'bg-white text-slate-400 border border-slate-200'}`;
+                    btn.textContent = s.day;
+                    btn.onclick = () => { activeDayIdx = idx; updateDashboard(); };
+                    dayTabs.appendChild(btn);
+                });
+            }
+
+            const key = `${currentMonth}-${currentWeek}-${activeDayIdx}`;
+            if (helper.el('dayDetail')) {
+                helper.el('dayDetail').innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center space-x-6">
+                            <div class="w-16 h-16 bg-sky-50 text-sky-700 rounded-2xl flex items-center justify-center text-xl font-black">${day.day}</div>
+                            <div><h4 class="text-xs font-bold text-emerald-800 uppercase tracking-widest mb-1">Topic</h4><p class="text-xl font-black text-slate-800 leading-tight">${day.task}</p></div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <input type="checkbox" class="checkbox-custom" ${taskState[key] ? 'checked' : ''} onchange="toggleTask(${activeDayIdx})">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase mt-2">Done</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const vGrid = helper.el('vocabGrid');
+            if (vGrid) {
+                vGrid.innerHTML = '';
+                data.vocab.forEach(v => {
+                    vGrid.innerHTML += `<div class="p-4 bg-white rounded-2xl border border-slate-200"><p class="text-[10px] font-black text-emerald-700 uppercase mb-1">${v.term}</p><p class="text-sm font-medium text-slate-600">${v.def}</p></div>`;
+                });
+            }
+
+            const pLogic = helper.el('projectLogic');
+            if (pLogic) {
+                pLogic.innerHTML = '';
+                data.project.steps.forEach((s, i) => {
+                    pLogic.innerHTML += `<div class="flex items-center space-x-3"><div class="w-5 h-5 bg-emerald-100 text-emerald-800 text-[10px] rounded-full flex items-center justify-center font-bold">${i+1}</div><p class="text-sm font-medium text-slate-700">${s}</p></div>`;
+                });
+            }
+            if (helper.el('codeSnippet')) helper.el('codeSnippet').textContent = data.project.code;
+
+            loadQuiz();
+            loadVaultData();
+            updateProgress();
+            renderProfileDisplay();
+        }
+
+        function toggleProfileModal(show) {
+            if (helper.el('profileModal')) helper.el('profileModal').classList.toggle('hidden', !show);
+            if (show) {
+                const p = profileState;
+                if (helper.el('profName')) helper.el('profName').value = p.name;
+                if (helper.el('profTitle')) helper.el('profTitle').value = p.title;
+                if (helper.el('profAddress')) helper.el('profAddress').value = p.addr;
+                if (helper.el('profProgram')) helper.el('profProgram').value = p.program;
+                if (helper.el('profSchool')) helper.el('profSchool').value = p.school;
+                if (helper.el('profAttainment')) helper.el('profAttainment').value = p.attain;
+                if (helper.el('profSociety')) helper.el('profSociety').value = p.society;
+                if (helper.el('profJobs')) helper.el('profJobs').value = p.jobs;
+                if (helper.el('profCerts')) helper.el('profCerts').value = p.certs;
+                if (helper.el('profSeminars')) helper.el('profSeminars').value = p.sem;
+                if (p.pic && helper.el('modalProfilePic')) helper.el('modalProfilePic').style.backgroundImage = `url(${p.pic})`;
+            }
+        }
+
+        function handleImageUpload(e) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                profileState.pic = reader.result;
+                if (helper.el('modalProfilePic')) helper.el('modalProfilePic').style.backgroundImage = `url(${reader.result})`;
+            }
+            if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+        }
+
+        function saveProfile() {
+            profileState = {
+                ...profileState,
+                name: helper.el('profName').value,
+                title: helper.el('profTitle').value,
+                addr: helper.el('profAddress').value,
+                program: helper.el('profProgram').value,
+                school: helper.el('profSchool').value,
+                attain: helper.el('profAttainment').value,
+                society: helper.el('profSociety').value,
+                jobs: helper.el('profJobs').value,
+                certs: helper.el('profCerts').value,
+                sem: helper.el('profSeminars').value
+            };
+            localStorage.setItem('gis_profile_v3', JSON.stringify(profileState));
+            toggleProfileModal(false);
+            renderProfileDisplay();
+        }
+
+        function renderProfileDisplay() {
+            const p = profileState;
+            helper.setText('profileNameDisplay', p.name || "Click to set Profile");
+            helper.setText('displayName', p.name || "Anonymous Analyst");
+            helper.setText('displayProfession', p.title || "WIP Analyst");
+            helper.setText('displayAddress', p.addr || "Not set.");
+            helper.setText('displayProgram', p.program ? `Undergraduate Program: ${p.program}` : "Undergraduate Program: Not set.");
+            helper.setText('displaySchool', p.school ? `School: ${p.school}` : "School: Not set.");
+            helper.setText('displayAttainment', p.attain || "Not set.");
+            helper.setText('displaySociety', p.society || "Not set.");
+            helper.setText('displayCerts', p.certs || "No certificates recorded.");
+            helper.setText('displaySeminars', p.sem || "No trainings recorded.");
+            if (p.pic && helper.el('displayProfilePic')) helper.el('displayProfilePic').style.backgroundImage = `url(${p.pic})`;
+        }
+
+        function toggleTask(idx) {
+            const key = `${currentMonth}-${currentWeek}-${idx}`;
+            taskState[key] = !taskState[key];
+            localStorage.setItem('gis_tasks_v3', JSON.stringify(taskState));
+            updateDashboard();
+        }
+
+        function loadQuiz() {
+            const data = roadmap[currentMonth].weeks[currentWeek];
+            const qContent = helper.el('quizContent');
+            if (qContent) {
+                qContent.innerHTML = '';
+                data.quiz.forEach((q, i) => {
+                    qContent.innerHTML += `<div class="space-y-4"><p class="font-bold text-slate-800">${i+1}. ${q.q}</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${q.a.map((opt, oIdx) => `<label class="flex items-center p-4 border border-slate-200 rounded-2xl cursor-pointer hover:bg-slate-50"><input type="radio" name="q${i}" value="${oIdx}" class="mr-3 accent-sky-700"><span class="text-sm text-slate-600">${opt}</span></label>`).join('')}</div></div>`;
+                });
+            }
+            helper.setText('quizHeader', `Assessment: Week ${currentWeek}`);
+            if (helper.el('quizResult')) helper.el('quizResult').classList.add('hidden');
+        }
+
+        function gradeQuiz() {
+            const data = roadmap[currentMonth].weeks[currentWeek];
+            let s = 0;
+            data.quiz.forEach((q, i) => {
+                const sel = document.querySelector(`input[name="q${i}"]:checked`);
+                if (sel && parseInt(sel.value) === q.correct) s++;
+            });
+            if (helper.el('quizResult')) helper.el('quizResult').classList.remove('hidden');
+            helper.setText('scoreText', `${s} / 20`);
+            if (helper.el('scoreComment')) helper.el('scoreComment').textContent = s >= 16 ? "Architect Grade achieved! Keep scaling." : "Precision matters. Review the fundamentals.";
+            if (helper.el('quizResult')) helper.el('quizResult').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function validateCode() {
+            const codeInput = helper.el('codeEditor');
+            const feedbackEl = helper.el('labFeedback');
+            if (!codeInput || !feedbackEl) return;
+            const c = codeInput.value.toLowerCase();
+            feedbackEl.textContent = (c.includes('if') || c.includes('for') || c.includes('def')) ? "Logic Validated!" : "Logic incomplete. Try adding a condition or loop.";
+            feedbackEl.className = "text-[10px] text-center " + (feedbackEl.textContent.includes('Validated') ? "text-emerald-400" : "text-rose-400");
+        }
+
+        function saveVaultData() {
+            const key = `${currentMonth}-${currentWeek}`;
+            const githubVal = helper.el('githubInput') ? helper.el('githubInput').value : "";
+            const notesVal = helper.el('artifactNotes') ? helper.el('artifactNotes').value : "";
+            vaultState[key] = { github: githubVal, notes: notesVal };
+            localStorage.setItem('gis_vault_v3', JSON.stringify(vaultState));
+            alert("Vault Synced.");
+        }
+
+        function loadVaultData() {
+            const k = `${currentMonth}-${currentWeek}`;
+            const d = vaultState[k] || { github: "", notes: "" };
+            if (helper.el('githubInput')) helper.el('githubInput').value = d.github;
+            if (helper.el('artifactNotes')) helper.el('artifactNotes').value = d.notes;
+        }
+
+        function renderSelectors() {
+            const mSel = helper.el('monthSelector');
+            if (mSel) {
+                mSel.innerHTML = '';
+                Object.keys(roadmap).forEach(m => mSel.innerHTML += `<button onclick="setMonth('${m}')" class="transition-all ${currentMonth === m ? 'month-btn-active' : 'hover:text-slate-600'}">${m}</button>`);
+            }
+            
+            const wSel = helper.el('masterWeekSelector');
+            if (wSel) {
+                wSel.innerHTML = '';
+                Object.keys(roadmap[currentMonth].weeks).forEach(w => wSel.innerHTML += `<button onclick="setWeek(${w})" class="px-6 py-2 rounded-xl text-sm font-bold transition-all ${currentWeek == w ? 'week-btn-active' : 'week-btn-inactive'}">Week ${w}</button>`);
+            }
+        }
+
+        function setMonth(m) { currentMonth = m; currentWeek = 1; activeDayIdx = 0; renderSelectors(); updateDashboard(); }
+        function setWeek(w) { currentWeek = w; activeDayIdx = 0; updateDashboard(); renderSelectors(); }
+        
+        function updateClock() {
+            if (helper.el('liveTime')) helper.el('liveTime').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+
+        window.onload = () => { renderSelectors(); updateDashboard(); setInterval(updateClock, 1000); updateClock(); };
+    </script>
+</body>
+</html>
